@@ -1,3 +1,5 @@
+;; Написать функцию принимающую на вход канал с задачами и массив агентов, и распределяющую задачи по агентам, результаты выполнения задач агентами записывать в выходной канал.
+
 (ns cljr.core
   (:require [clojure.core.async
     :as a
@@ -9,8 +11,6 @@
     (let [result (task)]
     ;; (println "Task done") 
     (callback result)))
-
-(defn exp [x n] (reduce * (repeat n x)))
 
 (defn agents-do-tasks
   [tasks agents output]
@@ -26,7 +26,7 @@
 (defn -main
   [& args]
   
-  (let [tasks (chan 100)
+  (let [tasks (chan 10)
         results (chan 10)
         agents (list (agent 0) (agent 1))]
 

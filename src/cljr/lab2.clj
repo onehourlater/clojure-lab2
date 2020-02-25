@@ -12,8 +12,6 @@
     ;; (println "Task done") 
     (callback result)))
 
-(defn exp [x n] (reduce * (repeat n x)))
-
 (defn agents-do-tasks
   [tasks agents output]
   (let [agents-chan (chan (count agents))]

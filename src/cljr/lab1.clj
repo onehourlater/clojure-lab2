@@ -15,9 +15,6 @@
     sum-index
       (some (fn [el] (when (> (get el 1) (func)) (get el 0))) all-sums)
     ]
-    ;; (println "sum-index = " sum-index)
-    ;; (println "count = " (count init-seq))
-    ;; (println "init-seq = " init-seq)
     (if (and (some? sum-index) (> (count init-seq) 0))
       (lazy-seq (cons (vec (take (+ sum-index 1) init-seq)) (sum-seq (drop (+ sum-index 1) init-seq))))
       nil)))
