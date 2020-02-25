@@ -3,7 +3,7 @@
 (ns cljr.core
   (:require [clojure.core.async
     :as a
-    :refer [>! <! >!! <!! chan go-loop]])
+    :refer [>!! <!! chan go-loop]])
   (:gen-class))
 
 (defn do-task
