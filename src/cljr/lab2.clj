@@ -3,23 +3,27 @@
 (ns cljr.core
   (:require [clojure.core.async
     :as a
-    :refer [>! <! >!! <!! chan go-loop]])
+    :refer [>! <! >!! <!! put! go chan go-loop]])
   (:gen-class))
 
 (defn do-task
   [init-value task callback]
     (let [result (task)]
-    ;; (println "Task done") 
+
     (callback result)))
 
 (defn agents-do-tasks
   [tasks agents output]
+  
   (let [agents-chan (chan (count agents))]
+    
     (doseq [ag agents] (>!! agents-chan ag))
+    
     (go-loop []
-      (when-let [task (<!! tasks)]
-        (let [ag (<!! agents-chan)]
-          (send ag do-task task (fn [result] (>!! output result) (>!! agents-chan ag)))))
+      (when-let [task (<! tasks)]
+        (let [ag (<! agents-chan)]
+          (send ag do-task task 
+            (fn [result] (go (>! output result) (>! agents-chan ag))))))
       (recur))))
     
 
@@ -27,19 +31,21 @@
   [& args]
   
   (let [tasks (chan 10)
-        results (chan 10)
+        output (chan 10)
         agents (list (agent 0) (agent 1))]
 
     (>!! tasks #(+ 1 2))
     (>!! tasks #(* 3 4))
     (>!! tasks #(/ 5 6))
-    (>!! tasks #(mod 7 8))
-  
-    (agents-do-tasks tasks agents results)
-    (println)
+    (>!! tasks #(mod 7 4))
     
     (go-loop []
-       (let [x (<!! results)]
-         (println "Got a value in this loop:" x))
-       (recur))
+      (let [o (<! output)]
+        (println "o = " o))
+      (recur))
+    
+    (agents-do-tasks tasks agents output)
+    (println)
+    
+    
 ))
